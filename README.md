@@ -1,3 +1,4 @@
 How it looks:
 
-![](sample.gif)
+
+![](example.gif)
