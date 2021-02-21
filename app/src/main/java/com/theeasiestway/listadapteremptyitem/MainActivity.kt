@@ -2,12 +2,10 @@ package com.theeasiestway.listadapteremptyitem
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.theeasiestway.listadapteremptyitem.adapters.ProductsAdapter
 import com.theeasiestway.listadapteremptyitem.databinding.ActivityMainBinding
 import com.theeasiestway.listadapteremptyitem.models.Product
-import com.theeasiestway.listadapteremptyitem.utils.ItemSwipeHandler
 import com.theeasiestway.listadapteremptyitem.utils.ProductsGenerator
 
 /**
@@ -33,7 +31,7 @@ class MainActivity : AppCompatActivity() {
                 setOnClickListener { addItem() }
                 hide()
             }
-            ItemTouchHelper(ItemSwipeHandler(productsAdapter) { removeItem(it) }).attachToRecyclerView(recyclerView)
+            //ItemTouchHelper(ItemSwipeHandler(productsAdapter) { removeItem(it) }).attachToRecyclerView(recyclerView)
         }
         productsAdapter.submitList(null)
     }
@@ -49,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         if (products.isNotEmpty()) binding.addItem.show()
         productsAdapter.submitList(products.toList())
 
-        if (productsAdapter.itemCount == 5) {
+        if (productsAdapter.itemCount == 5) { // auto clear
             binding.root.postDelayed({
                 products.clear()
                 productsAdapter.submitList(products.toList())
