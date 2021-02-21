@@ -12,7 +12,7 @@ import com.theeasiestway.listadapteremptyitem.utils.ItemSwipeHandler
 import com.theeasiestway.listadapteremptyitem.utils.ProductsGenerator
 
 /**
- * Created by Alexey Loboda on 20.02.2021
+ * Created by Loboda Alexey on 20.02.2021
  */
 class MainActivity : AppCompatActivity() {
 
@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun removeItem(product: Product) {
         products.remove(product)
-        Log.d("qwdwqdwq", "removed: ${product.name}; list is empty: ${products.isEmpty()}")
         if (products.isEmpty()) binding.addItem.hide()
     }
 }

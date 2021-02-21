@@ -16,11 +16,15 @@ object ProductsGenerator {
     )
 
     private val productsIds = arrayListOf<Int>()
+    private val randomId = 1..100
+    private val randomColor = 0..255
+
     val productsColors = hashMapOf<String, Int>()
     val products = arrayListOf<Product>()
 
     init {
         generateProducts()
+        products.addAll(products)
     }
 
     private fun generateProducts() {
@@ -28,12 +32,10 @@ object ProductsGenerator {
         productsColors.clear()
         products.clear()
 
-        val randomId = Random(System.currentTimeMillis())
-        val randomColor = Random(0)
         for (i in 0 until productNames.size) {
             var idAdded = false
             while (!idAdded) {
-                val id = randomId.nextInt()
+                val id = randomId.shuffled().first()
                 if (!productsIds.contains(id)) {
                     productsIds.add(id)
                     idAdded = true
@@ -42,13 +44,14 @@ object ProductsGenerator {
 
             var colorAdded = false
             while (!colorAdded) {
-                val color = Color.argb(randomColor.nextInt(150,256),
-                    randomColor.nextInt(256),
-                    randomColor.nextInt(256),
-                    randomColor.nextInt(256))
+                val color = Color.rgb(
+                    randomColor.shuffled().first(),
+                    randomColor.shuffled().first(),
+                    randomColor.shuffled().first())
 
                 val luminance = ColorUtils.calculateLuminance(color)
-                if (luminance !in 0.5..0.7) continue
+                val contrast = ColorUtils.calculateContrast(color, Color.WHITE)
+                if (contrast < 0.9 || luminance < 0.5) continue
 
                 if (productsColors[productNames[i]] != color) {
                     productsColors[productNames[i]] = color

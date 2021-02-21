@@ -1,12 +1,11 @@
 package com.theeasiestway.listadapteremptyitem.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 /**
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
  */
 abstract class ListAdapterEmptyItem<T>(
     diffCallback: DiffUtil.ItemCallback<T>
-): ListAdapter<T, RecyclerView.ViewHolder>(diffCallback) {
+): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         val typeEmpty = 0
@@ -22,9 +21,24 @@ abstract class ListAdapterEmptyItem<T>(
     }
 
     private val emptyList = listOf<T?>(null)
+    private var removedItems = arrayListOf<T>()
+    private val differ = AsyncListDiffer(this, diffCallback).apply {
+        addListListener { _, newList ->
+            var isActualList = true
+            removedItems.forEach {
+                if (newList.contains(it)) {
+                    isActualList = false
+                    return@forEach
+                }
+            }
+            if (isActualList) removedItems.clear()
+        }
+    }
+
+    override fun getItemCount() = differ.currentList.size
 
     override fun getItemViewType(position: Int): Int {
-        return if (currentList.size == 1 && currentList[position] == null) typeEmpty else typeData
+        return if (differ.currentList.size == 1 && differ.currentList[position] == null) typeEmpty else typeData
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -32,25 +46,32 @@ abstract class ListAdapterEmptyItem<T>(
         if (holder is ListAdapterEmptyItem<*>.ViewHolder) {
             with(holder as ListAdapterEmptyItem<T>.ViewHolder) {
                 if (itemViewType == typeEmpty) bindEmpty()
-                else bindData(currentList[position] as T)
+                else bindData(differ.currentList[position] as T)
             }
         }
     }
 
-    override fun submitList(list: List<T>?) {
-        if (list == null || list.isEmpty()) super.submitList(emptyList)
-        else super.submitList(list)
+    fun submitList(list: List<T>?) {
+        if (list == null || list.isEmpty()) differ.submitList(emptyList)
+        else differ.submitList(list)
     }
 
     fun removeItem(position: Int): T? {
         if (position >= itemCount || getItemViewType(position) == typeEmpty) return null
-        val item = currentList[position]
-        val list = currentList.toMutableList().apply { remove(item) }
-        Log.d("qwdwqdwq", "in adapter removed: ${item}; list: $list")
+        val item = differ.currentList[position]
+        removedItems.add(item)
+        val list = differ.currentList - removedItems
         submitList(list)
         return item
     }
 
+    fun removeItem(item: T): T? {
+        val position = differ.currentList.indexOf(item)
+        if (position == -1) return null
+        return removeItem(position)
+    }
+
+    /** for ItemTouchHelper.SimpleCallbackgetSwipeDirs.getSwipeDirs() */
     open fun isItemSwipable(viewHolder: RecyclerView.ViewHolder): Boolean {
         return viewHolder.itemViewType != typeEmpty
     }
