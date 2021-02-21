@@ -51,7 +51,7 @@ object ProductsGenerator {
 
                 val luminance = ColorUtils.calculateLuminance(color)
                 val contrast = ColorUtils.calculateContrast(color, Color.WHITE)
-                if (contrast < 0.9 || luminance < 0.5) continue
+                if (contrast < 0.9 || luminance !in 0.45..0.7) continue
 
                 if (productsColors[productNames[i]] != color) {
                     productsColors[productNames[i]] = color

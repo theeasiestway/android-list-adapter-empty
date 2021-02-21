@@ -1,7 +1,6 @@
 package com.theeasiestway.listadapteremptyitem.adapters
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.theeasiestway.listadapteremptyitem.R
 import com.theeasiestway.listadapteremptyitem.databinding.ItemEmptyPlaceholderBinding
 import com.theeasiestway.listadapteremptyitem.databinding.ItemProductBinding
@@ -14,9 +13,9 @@ import com.theeasiestway.listadapteremptyitem.utils.ProductsGenerator
  */
 class ProductsAdapter(
     private val onAddItemClicked: () -> Unit
-): ListAdapterEmptyItem<Product>(DiffCallbackProduct) {
+): ListAdapterEmptyItem<Product, ProductsAdapter.ProductViewHolder>(DiffCallbackProduct) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         return if (viewType == typeData) ProductViewHolder(R.layout.item_product, parent)
         else ProductViewHolder(R.layout.item_empty_placeholder, parent)
     }

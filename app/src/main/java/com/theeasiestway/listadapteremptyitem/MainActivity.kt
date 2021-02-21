@@ -1,8 +1,7 @@
 package com.theeasiestway.listadapteremptyitem
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.theeasiestway.listadapteremptyitem.adapters.ProductsAdapter
@@ -49,6 +48,14 @@ class MainActivity : AppCompatActivity() {
         }
         if (products.isNotEmpty()) binding.addItem.show()
         productsAdapter.submitList(products.toList())
+
+        if (productsAdapter.itemCount == 5) {
+            binding.root.postDelayed({
+                products.clear()
+                productsAdapter.submitList(products.toList())
+                binding.addItem.hide()
+            }, 2000)
+        }
     }
 
     private fun removeItem(product: Product) {

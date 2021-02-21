@@ -2,13 +2,13 @@ package com.theeasiestway.listadapteremptyitem.utils
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.theeasiestway.listadapteremptyitem.adapters.ListAdapterEmptyItem
+import com.theeasiestway.listadapteremptyitem.adapters.ListAdapterEmptyItemSwipable
 
 /**
  * Created by Loboda Alexey on 21.02.2021
  */
 class ItemSwipeHandler<T>(
-    private val adapter: ListAdapterEmptyItem<T>,
+    private val adapter: ListAdapterEmptyItemSwipable<T, *>,
     private val onItemRemoved: ((item: T) -> Unit)? = null
 ): ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
