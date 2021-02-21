@@ -23,6 +23,7 @@ abstract class ListAdapterEmptyItem<T, VH: ListAdapterEmptyItem<T, VH>.ViewHolde
 
     private val emptyList = listOf<T?>(null)
 
+    @CallSuper
     override fun getItemViewType(position: Int): Int {
         return if (currentList.size == 1 && currentList[position] == null) typeEmpty else typeData
     }
@@ -35,6 +36,7 @@ abstract class ListAdapterEmptyItem<T, VH: ListAdapterEmptyItem<T, VH>.ViewHolde
         }
     }
 
+    @CallSuper
     override fun submitList(list: List<T>?) {
         if (list == null || list.isEmpty()) super.submitList(emptyList)
         else super.submitList(list)
