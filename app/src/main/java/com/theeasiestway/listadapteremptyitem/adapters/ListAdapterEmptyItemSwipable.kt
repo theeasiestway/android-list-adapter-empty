@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
-import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 /**
@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
  */
 abstract class ListAdapterEmptyItemSwipable<T, VH: ListAdapterEmptyItemSwipable<T, VH>.ViewHolder>(
     diffCallback: DiffUtil.ItemCallback<T>
-): RecyclerView.Adapter<VH>() {
+): ListAdapter<T, VH>(diffCallback) {
 
     companion object {
         val typeEmpty = 0
@@ -23,53 +23,43 @@ abstract class ListAdapterEmptyItemSwipable<T, VH: ListAdapterEmptyItemSwipable<
 
     private val emptyList = listOf<T?>(null)
     private var removedItems = arrayListOf<T>()
-    private val differ by lazy {
-        AsyncListDiffer(this, diffCallback).apply {
-        addListListener { _, newList ->
-            var isActualList = true
-            removedItems.forEach {
-                if (newList.contains(it)) {
-                    isActualList = false
-                    return@forEach
-                }
-            }
-            if (isActualList) removedItems.clear()
-        }
-    }
-    }
-
-    override fun getItemCount() = differ.currentList.size
 
     @CallSuper
     override fun getItemViewType(position: Int): Int {
-        return if (differ.currentList.size == 1 && differ.currentList[position] == null) typeEmpty else typeData
+        return if (currentList.size == 1 && currentList[position] == null) typeEmpty else typeData
     }
 
     @CallSuper
     override fun onBindViewHolder(holder: VH, position: Int) {
         with(holder) {
             if (itemViewType == typeEmpty) bindEmpty()
-            else bindData(differ.currentList[position])
+            else bindData(currentList[position])
         }
     }
 
     @CallSuper
-    fun submitList(list: List<T>?) {
-        if (list == null || list.isEmpty()) differ.submitList(emptyList)
-        else differ.submitList(list)
+    override fun submitList(list: List<T>?) {
+        submit(list, false)
+    }
+
+    private fun submit(list: List<T>?, isLocalSubmit: Boolean) {
+        if (!isLocalSubmit) removedItems.clear()
+        if (list == null || list.isEmpty()) super.submitList(emptyList)
+        else super.submitList(list)
     }
 
     fun removeItem(position: Int): T? {
         if (position >= itemCount || getItemViewType(position) == typeEmpty) return null
-        val item = differ.currentList[position]
+        val item = currentList[position]
         removedItems.add(item)
-        val list = differ.currentList - removedItems
-        submitList(list)
+        val list = currentList - removedItems
+        if (list.isEmpty()) removedItems.clear()
+        submit(list, true)
         return item
     }
 
     fun removeItem(item: T): T? {
-        val position = differ.currentList.indexOf(item)
+        val position = currentList.indexOf(item)
         if (position == -1) return null
         return removeItem(position)
     }
