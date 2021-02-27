@@ -13,7 +13,7 @@ import com.theeasiestway.listadapteremptyitem.utils.ProductsGenerator
  */
 class ProductsAdapter(
     private val onAddItemClicked: () -> Unit
-): ListAdapterEmptyItem<Product, ProductsAdapter.ProductViewHolder>(DiffCallbackProduct) {
+): ListAdapterEmptyItemSwipeable<Product, ProductsAdapter.ProductViewHolder>(DiffCallbackProduct) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         return if (viewType == typeData) ProductViewHolder(R.layout.item_product, parent)

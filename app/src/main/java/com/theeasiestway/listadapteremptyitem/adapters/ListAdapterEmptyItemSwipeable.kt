@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * Created by Loboda Alexey on 20.02.2021
  */
-abstract class ListAdapterEmptyItemSwipable<T, VH: ListAdapterEmptyItemSwipable<T, VH>.ViewHolder>(
+abstract class ListAdapterEmptyItemSwipeable<T, VH: ListAdapterEmptyItemSwipeable<T, VH>.ViewHolder>(
     diffCallback: DiffUtil.ItemCallback<T>
 ): ListAdapter<T, VH>(diffCallback) {
 
@@ -22,7 +22,7 @@ abstract class ListAdapterEmptyItemSwipable<T, VH: ListAdapterEmptyItemSwipable<
     }
 
     private val emptyList = listOf<T?>(null)
-    private var removedItems = arrayListOf<T>()
+    private val removedItems = arrayListOf<T>()
 
     @CallSuper
     override fun getItemViewType(position: Int): Int {
@@ -65,7 +65,7 @@ abstract class ListAdapterEmptyItemSwipable<T, VH: ListAdapterEmptyItemSwipable<
     }
 
     /** for ItemTouchHelper.SimpleCallbackgetSwipeDirs.getSwipeDirs() */
-    open fun isItemSwipable(viewHolder: RecyclerView.ViewHolder): Boolean {
+    open fun isItemSwipeable(viewHolder: RecyclerView.ViewHolder): Boolean {
         return viewHolder.itemViewType != typeEmpty
     }
 
